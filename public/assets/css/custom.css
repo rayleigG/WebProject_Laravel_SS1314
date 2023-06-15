@@ -1,0 +1,121 @@
+/*
+Custom Css
+*/
+@import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+.gradient-custom {
+    /* fallback for old browsers */
+    background: #f6d365;
+
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #59ab6e;
+    /* Replace with your desired color */
+    color: #ffffff;
+    /* Replace with your desired text color */
+    border-color: #59ab6e;
+}
+
+.icon-hover-primary:hover {
+    border-color: #3b71ca !important;
+    background-color: white !important;
+}
+
+.icon-hover-primary:hover i {
+    color: #3b71ca !important;
+}
+
+.icon-hover-danger:hover {
+    border-color: #dc4c64 !important;
+    background-color: white !important;
+}
+
+.icon-hover-danger:hover i {
+    color: #dc4c64 !important;
+}
+
+.quantity-input {
+    display: inline-block;
+    width: 80px;
+    height: 30px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.quantity-input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(89, 171, 110, 0.5);
+}
+
+.modal-right {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    transform: translate(0, 100%);
+    width: 90%;
+    /* Adjust the width as needed */
+    margin: 0 auto;
+}
+
+@media (min-width: 1025px) {
+    .h-custom {
+        height: 100vh !important;
+    }
+}
+
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: .75em;
+    padding-right: .75em;
+}
+
+.card-registration .select-arrow {
+    top: 13px;
+}
+
+.bg-grey {
+    background-color: #eae8e8;
+}
+
+@media (min-width: 992px) {
+    .card-registration-2 .bg-grey {
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+    }
+}
+
+@media (max-width: 991px) {
+    .card-registration-2 .bg-grey {
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+    }
+}
+.quantity-input_Cart{
+    display: inline-block;
+    width: 80px;
+    height: 30px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.quantity-input_Cart:focus{
+    outline: none;
+    box-shadow: 0 0 5px rgba(89, 171, 110, 0.5);
+}
+.modal-title{
+    font-family: 'Oswald', sans-serif;
+}
