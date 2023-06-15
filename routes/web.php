@@ -67,33 +67,10 @@ Route::get('language/{locale}', function ($locale) {
 Route::post('/{id}', [HomeController::class, 'cart'])->name('shoppingCart');
 Route::delete('/remove-from-cart/{id}', [HomeController::class, 'removeFromCart'])->name('removeFromCart');
 //End add to cart
-// Route::fallback(function () {
-//     return redirect()->route('user.index'); // Replace 'home' with your desired route name
-// });
+Route::fallback(function () {
+    return redirect()->route('user.index'); // Replace 'home' with your desired route name
+});
 
-
-
-
-
-// Route::get('/login', [AdminController::class, 'login'])->name('login'); // Login form
-// Route::post('/login', [AdminController::class, 'loginPost'])->name('login'); // Login submission
-// Route::get('/login-user', [UserController::class, 'loginUser'])->name('loginUser'); // Login form
-// Route::post('/login-user', [UserController::class, 'loginPostUser'])->name('loginUser'); // Login submission
-// Route::post('/register-user', [AdminController::class, 'registerUserPost'])->name('registerUser');
-// Route::get('/register-user', [AdminController::class, 'registerUser'])->name('registerUser');
-
-// Route::group(['middleware' => 'auth', 'prefix' => 'wp-admin'], function () {
-//     //Admin page
-//     Route::get('/', [HomeController::class, 'indexAdmin'])->name('home');
-//     Route::get('/setting', [HomeController::class, 'indexAdmin'])->name('setting');
-//     Route::get('/product', [HomeController::class, 'indexAdmin'])->name('product');
-//     //End Admin page
-//     //Authentication
-//     Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
-//     Route::post('/register', [AdminController::class, 'registerPost'])->name('register');
-//     Route::get('/register', [AdminController::class, 'register'])->name('register');
-//     //End Authentication
-// });
 
 
 
