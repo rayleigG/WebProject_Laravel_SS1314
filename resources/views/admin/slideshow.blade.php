@@ -3,6 +3,8 @@
     <h4 class=" font-weight-bold text-primary px-2 mt-4">Slideshow</h4>
     <button type="button" class="btn btn-primary mx-3 my-2" data-bs-toggle="modal" data-bs-target="#exampleModal1"
         data-bs-whatever="@mdo">Add New</button>
+    <button type="button" class="btn btn-primary mx-3 my-2" data-bs-toggle="modal" data-bs-target="#laravelFormModal"
+        data-bs-whatever="@mdo">Add new with Laravel Form</button>
     @if (Session('success'))
         <div class="alert alert-success alert-dismissible fade show my-3" role="alert">
             <strong>a slideshow has been deleted!</strong>
@@ -75,36 +77,36 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="txttitle" class="form-label">Title</label>
-                        <input type="text" class="form-control" id="txttile" name="txttitle" placeholder="Title">
-                    </div>
-                    <div class="mb-3">
-                        <label for="txtsubTitle" class="form-label">Subtitle</label>
-                        <input type="text" class="form-control" id="txtsubTitle" name="txtsubTitle"
-                            placeholder="Subtitle">
-                    </div>
-                    <div class="mb-3">
-                        <label for="txtdes" class="form-label">Description</label>
-                        <textarea class="form-control" id="txtdes" name="txtdes" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="txtlink" class="form-label">Link</label>
-                        <input type="text" class="form-control" id="txtlink" name="txtlink" placeholder="Link">
-                    </div>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="chkenable" name="chkenable"
-                            checked>
-                        <label class="form-check-label" for="chkenable">Enable</label>
-                    </div>
-                    <div class="mb-3 mt-3">
-                        <p>Image</p>
-                        <input class="form-control" type="file" id="img" name="img">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-danger" data-bs-dismiss="modal" value="Cancel">
-                    <input class="btn btn-primary" type="submit" value="Submit" style="width:90px" name="btnSubmit">
+                    <form action="{{ route('admin.insertProduct') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="txttitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="txttitle" name="txttitle" placeholder="Title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtsubTitle" class="form-label">Subtitle</label>
+                            <input type="text" class="form-control" id="txtsubTitle" name="txtsubTitle"
+                                placeholder="Subtitle">
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtdes" class="form-label">Description</label>
+                            <textarea class="form-control" id="txtdes" name="txtdes" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="txtlink" class="form-label">Link</label>
+                            <input type="text" class="form-control" id="txtlink" name="txtlink" placeholder="Link">
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="chkenable" name="chkenable"
+                                checked>
+                            <label class="form-check-label" for="chkenable">Enable</label>
+                        </div>
+                        <div class="mb-3 mt-3">
+                            <p>Image</p>
+                            <input class="form-control" type="file" id="img" name="img">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -128,6 +130,44 @@
             </div>
         </div>
     </div>
+    <!--Form Laravel-->
+    <div class="modal fade" id="laravelFormModal" tabindex="-1" aria-labelledby="laravelFormModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="laravelFormModalLabel">Add new slideshow</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('admin.insertProduct') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            {{ Form::text('txttitle', null, ['placeholder' => 'Title']), array('class' => 'bootstrap5') }}
+                        </div>
+                        <div class="mb-3">
+                            {{ Form::text('txtsubTitle', null, ['placeholder' => 'Subtitle']) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ Form::textarea('txtdes', null, ['placeholder' => 'Description', 'rows' => 2]) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ Form::text('txtlink', null, ['placeholder' => 'Link']) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ Form::checkbox('chkenable', 'chkenable', null, ['checked' => true]) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ Form::file('img') }}
+                        </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--end Form Laravel-->
     <script>
         function deleteSlideshow(id) {
             var deleteBut = document.getElementById("deleteBut");

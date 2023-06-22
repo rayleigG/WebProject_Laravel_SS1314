@@ -43,6 +43,7 @@ Route::middleware(['auth', 'admin'])->prefix('/wp-admin')->group(function () {
     Route::get('/slideshow/toggle/{id}/{action}', [SlideshowController::class, 'toggleSlideshow'])->name('toggleSlideshow');
     Route::get('/slideshow/reorder/{id}/{action}', [SlideshowController::class, 'reorderSlideshow'])->name('reorderSlideshow');
     Route::get('/slideshow/delete/{id}/', [SlideshowController::class, 'deleteSlideshow'])->name('admin.deleteSlideshow');
+    Route::get('/insertProduct', [SlideshowController::class, 'insertProduct'])->name('admin.insertProduct');
      //End Slideshow
     //Login and register
     Route::get('/logout', [AdminController::class, 'logout'])->name('logout');

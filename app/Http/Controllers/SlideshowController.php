@@ -66,4 +66,7 @@ class SlideshowController extends Controller
         }
         
     }
+    public function insertProduct(){
+        return view('admin.insertProduct');
+    }
 }
