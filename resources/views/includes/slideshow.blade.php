@@ -14,13 +14,13 @@
         @foreach ($slideshows as $item)
             @if ($loop->first)
                 <div class="carousel-item active">
-            @else
+                @else
                     <div class="carousel-item">
             @endif
             <div class="container">
                 <div class="row p-5">
                     <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
-                        <img class="img-fluid" src="./assets/img/{{ $item->img }}" alt="">
+                        <img class="img-fluid" src="{{ asset('image/slideshow/' . $item->img) }}" alt="">
                     </div>
                     <div class="col-lg-6 mb-0 d-flex align-items-center">
                         <div class="text-align-left">
@@ -33,9 +33,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-        @endforeach
     </div>
+    @endforeach
+</div>
 <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button"
     data-bs-slide="prev">
     <i class="fas fa-chevron-left"></i>

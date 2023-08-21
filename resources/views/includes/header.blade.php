@@ -22,8 +22,10 @@
                         class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
                 <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i
                         class="fab fa-linkedin fa-sm fa-fw"></i></a>
-                <a class="text-light btn btn-success mx-3" href="{{ route('user.logout') }}">
-                    Log out <i class="fas fa-sign-out-alt"></i>
+                <a class="text-light btn btn-success mx-3"
+                    href="{{ auth()->user() ? route('user.logout') : route('login') }}">
+                    {{ auth()->user() ? 'Log out' : 'Log in' }}
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
             </div>
         </div>
@@ -74,16 +76,20 @@
                     data-bs-target="#templatemo_search">
                     <i class="fa fa-fw fa-search text-dark mr-2"></i>
                 </a>
-                <a class="nav-icon position-relative text-decoration-none" href="#" role="button"
-                    data-bs-toggle="modal" data-bs-target="#cartModal">
+                <a class="nav-icon position-relative text-decoration-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">
                     <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                     @php
                         $userId = auth()->user() ? auth()->user()->id : null;
-                        $cartCount = $userId ? Cart::where('user_id', $userId)->sum('quantity') : 0;
+                        $cartCount = $userId
+                            ? Cart::where('user_id', $userId)
+                                ->where('payment_status', 0)
+                                ->sum('quantity')
+                            : 0;
                     @endphp
 
                     <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light"
-                        style="color: #ff0000;">
+                        style="color: #ff0000;" id="cart_count">
                         {{ $cartCount }}
                     </span>
 
@@ -130,6 +136,12 @@
 
     </div>
 </nav>
+@if (Session::has('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ Session::get('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 <!-- Search Modal -->
 <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -149,6 +161,7 @@
     </div>
 </div>
 <!-- Search Modal -->
+{{-- User Information --}}
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -218,173 +231,187 @@
         </div>
     </div>
 </div>
+{{-- User Information --}}
 <!--Cart Modal-->
-<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-    <div
-        class="modal-dialog modal-right modal-dialog-scrollable {{ auth()->user() && Cart::where('user_id', $userId)->sum('quantity') != 0 ? 'modal-xl' : '' }}">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title font-weight-bold px-2 mt-4" style="color:#83c589;" id="exampleModalLabel">
-                    Check out</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <section style="height: 90%;">
-                    <div id="cart-total"></div>
-                    <div class="container py-5 h-100">
-                        <div class="row d-flex justify-content-center align-items-center h-100">
-                            <div class="col-12">
-                                <div class="card card-registration card-registration-2 mb-5 mt-2"
-                                    style="border-radius: 15px;">
-                                    <div class="card-body p-0">
-                                        <div class="row g-0">
-                                            <div class="col-lg-8">
-                                                <div class="p-5">
-                                                    @if (auth()->user() && !Cart::where('user_id', $userId)->sum('quantity') == 0)
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center mb-5">
-                                                            <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
-                                                            <h6 class="mb-0 text-muted">3 items</h6>
-                                                        </div>
-                                                        <hr class="my-4">
-                                                        @foreach ($productsInCart as $item)
-                                                            @php
-                                                                $qty = Cart::where('user_id', auth()->user()->id)
-                                                                    ->where('product_id', $item->product_id)
-                                                                    ->sum('quantity');
-                                                                
-                                                                $productName = Product::where('productID', $item->product_id)
-                                                                    ->pluck('pname')
-                                                                    ->first();
-                                                                $productPrice = Product::where('productID', $item->product_id)
-                                                                    ->pluck('price')
-                                                                    ->first();
-                                                                $productImg = Product::where('productID', $item->product_id)
-                                                                    ->pluck('img')
-                                                                    ->first();
-                                                            @endphp
-                                                            <div
-                                                                class="row mb-4 d-flex justify-content-between align-items-center">
-                                                                <div class="col-md-2 col-lg-2 col-xl-2">
-                                                                    <img src="assets/img/{{ $productImg }}"
-                                                                        class="img-fluid rounded-3"
-                                                                        alt="Cotton T-shirt">
-                                                                </div>
-                                                                <div class="col-md-3 col-lg-3 col-xl-3">
-                                                                    <h6 class="text-black mb-0">{{ $productName }}
-                                                                    </h6>
-                                                                </div>
-                                                                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                                                    <button class="btn btn-link px-2"
-                                                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                                                        <i class="fas fa-minus"></i>
-                                                                    </button>
-                                                                    <input type="number" class="quantity-input_Cart"
-                                                                        min="1" value="{{ $qty }}"
-                                                                        readonly>
-                                                                    <button class="btn btn-link px-2"
-                                                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                                                        <i class="fas fa-plus"></i>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                                                    <h6 class="mb-0">
-                                                                        {{ '$' . number_format($productPrice, 2, '.', ',') }}
-                                                                    </h6>
-                                                                </div>
-                                                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                                                    <form
-                                                                        action="{{ route('removeFromCart', ['id' => $item->product_id]) }}"
-                                                                        method="POST">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="submit"
-                                                                            class="text-muted btn btn-link">
-                                                                            <i class="fas fa-times"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                </div>
+<div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel"
+    style="{{ isset($productsInCart) && count($productsInCart) > 0 ? 'height: 100%;' : 'height:400px' }}">
+
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasTopLabel">Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        @if (isset($productsInCart) && count($productsInCart) > 0)
+            <section class="h-100 py-4" style="background-color: #eee;">
+                <div class="container py-2">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="card">
+                                <div class="card-body p-4">
+                                    {{-- //Using Normal Controller to get data --}}
+                                    {{-- <table class="table table-striped table-hover table-success">
+                                        <thead>
+                                            <tr>
+                                                <th>Item</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Amount</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($productsInCart as $item)
+                                                <tr style="font-size: 15px">
+                                                    <td>
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto">
+                                                                <img src="{{ asset('assets/img/' . $item->product->img) }}"
+                                                                    alt="Product Image" width="30px"
+                                                                    height="40px">
                                                             </div>
-                                                        @endforeach
-                                                    @else
-                                                        <h4>Your bag is empty</h4>
-                                                        <p>Check out our latest arrivals stay up-to-date with latest
-                                                            styles</p>
-                                                    @endif
-                                                    <hr class="my-4">
-                                                    <div class="pt-5">
-                                                        <h6 class="mb-0"><a href="{{ route('user.shop') }}"
-                                                                class="text-body"><i
-                                                                    class="fas fa-long-arrow-alt-left me-2"></i>Back to
-                                                                shop</a></h6>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @if (auth()->user() && Cart::where('user_id', $userId)->sum('quantity') != 0)
-                                                <div class="col-lg-4 bg-grey">
-                                                    <div class="p-5">
-                                                        <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
-                                                        <hr class="my-4">
-
-                                                        <div class="d-flex justify-content-between mb-4">
-                                                            <h5 class="text-uppercase">items 3</h5>
-                                                            <h5>€ 132.00</h5>
-                                                        </div>
-
-                                                        <h5 class="text-uppercase mb-3">Shipping</h5>
-
-                                                        <div class="mb-4 pb-2">
-                                                            <select class="select">
-                                                                <option value="1">Standard-Delivery- €5.00
-                                                                </option>
-                                                                <option value="2">Two</option>
-                                                                <option value="3">Three</option>
-                                                                <option value="4">Four</option>
-                                                            </select>
-                                                        </div>
-                                                        <h5 class="text-uppercase mb-3">Give code</h5>
-                                                        <div class="mb-5">
-                                                            <div class="form-outline">
-                                                                <input type="text" id="form3Examplea2"
-                                                                    class="form-control form-control-lg"
-                                                                    placeholder="Enter Your code">
+                                                            <div class="col">
+                                                                <h6>{{ $item->product->pname }}</h6>
                                                             </div>
                                                         </div>
-                                                        <hr class="my-4">
-                                                        <div class="d-flex justify-content-between mb-5">
-                                                            <h5 class="text-uppercase">Total price</h5>
-                                                            <h5>€ 137.00</h5>
-                                                        </div>
-                                                        <button type="button" class="btn btn-dark btn-block btn-lg"
-                                                            data-mdb-ripple-color="dark">Register</button>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        </div>
+                                                    </td>
+
+                                                    <td class="align-items-center justify-content-center">
+                                                        {{ $item->quantity }}</td>
+                                                    <td class="align-items-center justify-content-center">
+                                                        {{ '$' . number_format($item->product->price, 2, '.', ',') }}
+                                                    </td>
+                                                    <td class="align-items-center justify-content-center">
+                                                        {{ '$' . number_format($item->quantity * $item->product->price, 2, '.', ',') }}
+                                                    </td>
+                                                    <td class="align-items-center justify-content-center">
+                                                        <form action="{{ route('removeFromCart') }}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id"
+                                                                value="{{ $item->product_id }}">
+                                                            <input type="hidden" name="cart_id"
+                                                                value="{{ $item->cart_id }}">
+                                                            <input type="hidden" name="quantity"
+                                                                value="{{ $item->quantity }}">
+                                                            <button type="submit"
+                                                                style="background: transparent; border:none">
+                                                                <i class="fas fa-trash-alt"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table> --}}
+                                    {{-- //Using Normal Controller to get data --}}
+                                    <table class="table table-striped table-hover table-success">
+                                        <thead>
+                                            <tr>
+                                                <th>Item</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                                <th>Amount</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cart-items-body">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="container">
+                                <div class="card text-center">
+                                    <div class="card-header justify-content-between">
+                                        Check out
                                     </div>
+                                    <div class="card-body" style="text-align: left;" id="check-out">
+                                        @php
+                                            $cartItems = Cart::where('user_id', auth()->user()->id)
+                                                ->where('payment_status', 0)
+                                                ->get();
+                                            $totalAmount = 0;
+                                            foreach ($cartItems as $cartItem) {
+                                                $totalAmount += $cartItem->product->price * $cartItem->quantity;
+                                            }
+                                            $subtotal = $totalAmount;
+                                            $taxAmount = $totalAmount * 0.1;
+                                            $shippingCost = $totalAmount * 0.05;
+                                            $totalAmount = $taxAmount + $shippingCost;
+                                        @endphp
+                                        <h6 class="card-title">{{ auth()->user()->name . "'s Cart." }}</h6>
+                                        <p class="card-text">
+                                        <h6>Tax rate(%): 10% </h6>
+                                        <h6 id="tax_amount">Tax amount:
+                                            {{ '$' . number_format($taxAmount, 2, '.', ',') }}
+                                        </h6>
+                                        <h6 id="shipping_cost">Shipping Cost:
+                                            {{ '$' . number_format($shippingCost, 2, '.', ',') }}</h6>
+                                        <h6 id="subtotal"> Subtotal:
+                                            {{ '$' . number_format($subtotal, 2, '.', ',') }}
+                                        </h6>
+                                        <h6 id="total_amount">Total amount:
+                                            {{ '$' . number_format($totalAmount, 2, '.', ',') }}</h6>
+                                        </p>
+                                        <form action="{{ route('payment.charge') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="total_to_pay" id="total_to_pay">
+                                            <button type="submit" class="btn btn-success">Pay with Paypal.</button>
+                                        </form>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Check Out</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
+                </div>
+            </section>
+        @else
+            <section>
+                <div class="container">
+                    <div class="card text-center">
+                        <div class="card-header">
+                            OPP !!
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Empty Cart</h5>
+                            <p class="card-text">Your cart is currently empty.
+                                Feel free to browse our shop and add items to your cart.
+                                Thank you for visiting our store!
+                            </p>
+                            <a href="{{ route('user.shop') }}" class="btn btn-success">Go shop</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        @endif
     </div>
 </div>
-@push('scripts')
-    <script>
-        $(document).on('submit', '#remove-from-cart-form', function(event) {
-            event.preventDefault();
-            $.ajax({
-                url: '/remove-from-cart',
-                type: 'POST',
-                data: $(this).serialize(),
-            });
+{{-- <script>
+    const deleteProduct = (id) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/removeCart', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+        xhr.onload = () => {
+            if (xhr.status === 200) {
+                console.log('S' + xhr.responseText);
+                const deleteProduct = (id) => {
+                    const parentElement = document.querySelector(`[data-id="${id}"]`).closest('.p-5');
+                    if (parentElement) {
+                        parentElement.remove();
+                    }
+                };
+
+            } else {
+                console.log('E' + xhr.responseText);
+            }
+        };
+        const data = JSON.stringify({
+            cart_id: id,
         });
-    </script>
-@endpush
+        xhr.send(data);
+    };
+</script> --}}
 <!--End Cart Modal-->

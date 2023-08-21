@@ -72,7 +72,7 @@
                                 @csrf
                                 <div class="card mb-4 product-wap rounded-0">
                                     <div class="card rounded-0">
-                                        <img class="card-img rounded-0 img-fluid" src="assets/img/{{ $item->img }}">
+                                        <img class="card-img rounded-0 img-fluid" src="{{asset('image/product/' . $item->img)}}">
                                         <div
                                             class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                             <ul class="list-unstyled">
@@ -89,6 +89,8 @@
                                     </div>
                                     <div class="card-body">
                                         <a href="shop-single.html" class="h3 text-decoration-none">{{ $item->pname }}</a>
+                                        <a href="{{ route('product.detail', ['id' => $item->productID]) }}"
+                                            class="ms-5 text-decoration-none"><i class="far fa-eye"></i>&nbsp;View detail</a>
                                         <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
                                             <li>M/L/X/XL</li>
                                             <li class="pt-2">
@@ -104,20 +106,13 @@
                                                     class="product-color-dot color-dot-green float-left rounded-circle ml-1"></span>
                                             </li>
                                         </ul>
-                                        <ul class="list-unstyled d-flex justify-content-center mb-1">
-                                            <li>
-                                                <i class="text-warning fa fa-star"></i>
-                                                <i class="text-warning fa fa-star"></i>
-                                                <i class="text-warning fa fa-star"></i>
-                                                <i class="text-muted fa fa-star"></i>
-                                                <i class="text-muted fa fa-star"></i>
-                                            </li>
-                                        </ul>
+                                        <h6 style="color: rgb(250, 51, 51)">Instock: {{ $item->quantity }}</h6>
                                         <button class="btn btn-link px-2" type="button"
                                             onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
                                             <i class="fas fa-minus"></i>
                                         </button>
-                                        <input type="number" class="quantity-input" min="1" value="1" name="quantity" readonly>
+                                        <input type="number" class="quantity-input" min="1" value="1"
+                                            name="quantity" readonly>
                                         <button class="btn btn-link px-2" type="button"
                                             onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
                                             <i class="fas fa-plus"></i>

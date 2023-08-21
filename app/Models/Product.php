@@ -9,4 +9,9 @@ class Product extends Model
 {
     use HasFactory;
     protected $primaryKey = 'productID';
+    protected $table = 'products';
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }
