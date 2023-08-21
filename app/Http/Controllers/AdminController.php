@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Config as ModelsConfig;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
+use PSpell\Config;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends Controller
@@ -70,7 +72,24 @@ class AdminController extends Controller
     }
     public function setting()
     {
-        return view('admin.setting');
+        $config = ModelsConfig::first();
+        return view('admin.setting', compact('config'));
+    }
+    public function adminConfig_edit(Request $request)
+    {
+        $config = ModelsConfig::find(1);
+        $config->logo = $request->logo_;
+        $config->facebook = $request->facebook_link;
+        $config->instagram = $request->instagram_link;
+        $config->twitter = $request->twitter_link;
+        $config->telegram = $request->tele_link;
+        $config->tiktok = $request->tiktok_link;
+        if ($config->save()) {
+            return redirect()->route('config')->with('success', 'Config updated successfully.');
+        } else {
+            // Update failed, show the danger alert
+            return redirect()->back()->with('error', 'Failed to update. Please try again.')->withInput();
+        }
     }
     public function user()
     {

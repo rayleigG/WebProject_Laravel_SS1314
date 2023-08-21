@@ -36,6 +36,7 @@ Route::get('/user/logout', [HomeController::class, 'logoutUser'])->name('user.lo
 Route::middleware(['auth', 'admin'])->prefix('/wp-admin')->group(function () {
     Route::get('/', [AdminController::class, 'indexAdmin'])->name('home');
     Route::get('/config', [AdminController::class, 'setting'])->name('config');
+    Route::post('/config-edit', [AdminController::class, 'adminConfig_edit'])->name('admin.config_edit');
     Route::get('/product', [ProductController::class, 'index'])->name('product');
     Route::post('/product-add', [ProductController::class, 'addProduct'])->name('add.product');
     Route::get('/product/toggle/{id}/{action}', [ProductController::class, 'toggleProduct'])->name('admin.toggleProduct');
